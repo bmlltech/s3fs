@@ -437,7 +437,7 @@ class S3FS(FS):
                 for prefix in common_prefixes:
                     _prefix = prefix.get('Prefix')
                     _name = _prefix[prefix_len:]
-                    if _name != _s3_key:
+                    if prefix_len:
                         _directory.append(_name.rstrip(self.delimiter))
                 for obj in result.get('Contents', ()):
                     name = obj["Key"][prefix_len:]
