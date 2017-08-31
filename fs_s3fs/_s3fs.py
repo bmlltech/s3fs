@@ -635,7 +635,7 @@ class S3FS(FS):
                 for prefix in common_prefixes:
                     _prefix = prefix.get('Prefix')
                     _name = _prefix[prefix_len:]
-                    if _name != _s3_key:
+                    if prefix_len:
                         info = {
                             "basic": {
                                 "name": _name.rstrip(self.delimiter),
