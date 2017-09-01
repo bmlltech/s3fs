@@ -394,13 +394,15 @@ class S3FS(FS):
         _path = self.validatepath(path)
         _key = self._path_to_key(_path)
 
-        try:
-            dir_path = dirname(_path)
-            if dir_path != '/':
-                _dir_key = self._path_to_dir_key(dir_path)
-                self._get_object(dir_path, _dir_key)
-        except errors.ResourceNotFound:
-            raise errors.ResourceNotFound(path)
+        # # This seems to break because you can't run _get_object on
+        # # a directory... So commenting out the whole block
+        # try:
+        #     dir_path = dirname(_path)
+        #     if dir_path != '/':
+        #         _dir_key = self._path_to_dir_key(dir_path)
+        #         self._get_object(dir_path, _dir_key)
+        # except errors.ResourceNotFound:
+        #     raise errors.ResourceNotFound(path)
 
         if _path == '/':
             return Info({
