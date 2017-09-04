@@ -548,10 +548,26 @@ class S3FS(FS):
         info = self.getinfo(path)
         if info.is_dir:
             raise errors.FileExpected(path)
+
+        # get around unexpected behaviour in S3
+        # whereby deleting the last file in a directory
+        # deletes the parent directory as well
+        # https://github.com/boto/botocore/issues/1275
+        parent = self.delimiter.join(_key.split(self.delimiter)[:-1])
+        recreate_parent = len(self.listdir(parent)) == 1
         self.client.delete_object(
             Bucket=self._bucket_name,
             Key=_key
         )
+        if recreate_parent:
+            try:
+                self.makedir(parent)
+            except errors.DirectoryExists:
+                # directory wasn't deleted so no need for this
+                # putting this in to defend against fixes to
+                # https://github.com/boto/botocore/issues/1275
+                pass
+
 
     def isempty(self, path):
         self.check()
